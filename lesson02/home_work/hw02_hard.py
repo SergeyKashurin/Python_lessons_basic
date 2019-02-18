@@ -1,10 +1,19 @@
 # Задание-1: уравнение прямой вида y = kx + b задано в виде строки.
 # Определить координату y точки с заданной координатой x.
 
-equation = 'y = -12x + 11111140.2121'
-x = 2.5
+# equation = 'y = -12x + 11111140.2121'
+# x = 2.5
 # вычислите и выведите y
 
+# Решение 1
+# lst = equation.split(" ")
+#
+# a1 = int(lst[2][:-1])
+# a2 = float(lst[4])
+#
+# y = (a1 * x) + a2
+#
+# print(y)
 
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
 # Проверить, корректно ли введена дата.
@@ -17,13 +26,29 @@ x = 2.5
 #  (т.е. 2 символа для дня, 2 - для месяца, 4 - для года)
 
 # Пример корректной даты
-date = '01.11.1985'
+# date = '01.11.1985'
 
 # Примеры некорректных дат
-date = '01.22.1001'
-date = '1.12.1001'
-date = '-2.10.3001'
+# date = '01.22.1001'
+# date = '1.12.1001'
+# date = '-2.10.3001'
 
+# Решение 1
+# date = '18.02.2019'
+#
+#
+# def date_is_corrent(date):
+#     flag = False
+#     lst = str(date).split(".")
+#     print(lst)
+#     if len(lst[0]) == 2 and len(lst[1]) == 2 and len(lst[2]) == 4:
+#         if 1 <= int(lst[0]) <= 31 and 1 <= int(lst[1]) <= 12 and 1 <= int(lst[2]) <= 9999:
+#             if int(lst[0]) > 0 and int(lst[1]) > 0:
+#                 flag = True
+#     return flag
+#
+#
+# print(date_is_corrent(date))
 
 # Задание-3: "Перевёрнутая башня" (Задача олимпиадного уровня)
 #
@@ -53,4 +78,33 @@ date = '-2.10.3001'
 # Выход: 6 2
 #
 # Вход: 11
-# Выход: 5 3
+# Выход: 5
+
+# Решение 1
+
+# room_number = int(input("Введите номер комнаты:"))
+#
+# floor = 1
+# room = 1
+#
+# answer_floor = 0
+# answer_room = 0
+#
+# while room_number > 0:
+#
+#     for current_floor in range(floor):
+#         answer_floor += 1
+#
+#         for current_room in range(room):
+#             room_number -= 1
+#
+#             if room_number == 0:
+#                 answer_room = current_room + 1
+#                 break
+#
+#             if room_number == 0:
+#                 break
+#     floor += 1
+#     room += 1
+#
+# print(answer_floor, answer_room)
