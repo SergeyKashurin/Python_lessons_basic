@@ -123,3 +123,8 @@ OpenWeatherMap — онлайн-сервис, который предостав�
 
 """
 
+from urllib import request
+
+req = request.urlopen("http://api.openweathermap.org/data/2.5/weather?id=523523&units=metric&appid=a0676fe489771bc8199bdf536f08ec11")
+
+print(set(req))
