@@ -122,9 +122,151 @@ OpenWeatherMap — онлайн-сервис, который предостав�
         ...
 
 """
+import urllib.request
+import os
+import sqlite3
+import datetime
+import json
 
-from urllib import request
 
-req = request.urlopen("http://api.openweathermap.org/data/2.5/weather?id=523523&units=metric&appid=a0676fe489771bc8199bdf536f08ec11")
+class DB:
+    def __init__(self, db_name="weather.db"):
+        self._db_name = db_name
 
-print(set(req))
+    @property
+    def is_exist(self):
+        '''
+        Проверяем наличие файла базы данных
+        :return:
+        '''
+        return os.path.isfile(self._db_name)
+
+    @property
+    def create_db(self):
+        '''
+        Создаём базу данных пустышку
+        :return:
+        '''
+        conn = sqlite3.connect(self._db_name)
+        conn.close()
+
+        with sqlite3.connect(self._db_name) as conn:
+            conn.execute("""
+                create table weather_information (
+                    id_town        INTEGER PRIMARY KEY,
+                    town           VARCHAR(255),
+                    calendar_date  DATE,
+                    degree         INTEGER,
+                    id_weather     INTEGER
+                ); """)
+
+
+    def insert_or_replace_db(self):
+        #conn = sqlite3.connect(self._db_name)
+
+        #conn.row_factory = sqlite3.Row
+
+        #cur = conn.cursor()
+        # cur.execute("insert or replace into weather_information (id_town, town, calendar_date, degree, id_weather) values ( \
+        #     (select id_town from weather_information where town = 'Nalchik'), 'Nalchik', 5, 6")
+
+        #conn.close()
+        # for row in cur.fetchall():
+        #     print(row)
+        #     name, description, deadline = row
+        #     print(name, description, deadline)
+        pass
+
+
+    def select_information_from_db_for_test(self):
+        #TODO SELECT for test!
+        conn = sqlite3.connect(self._db_name)
+        conn.row_factory = sqlite3.Row
+
+        cur = conn.cursor()
+        cur.execute("select * from weather_information where id_town = 523523")
+        for row in cur.fetchall():
+            print(row)
+            town, calendar_date, degree = row
+            print(town, calendar_date, degree)
+
+    def insert_information_from_db_for_test(self):
+        #TODO INSERT for test!
+        conn = sqlite3.connect(self._db_name)
+        conn.execute("""
+            insert into weather_information (id_town, town, calendar_date, degree, id_weather) VALUES (?,?,?,?,?)""", (
+                523523,
+                'Nalchik',
+                datetime.date.today(),
+                25,
+                11,
+            )
+        )
+
+
+class JsonReader:
+    def __init__(self, file_name="city.list.json"):
+        self._file_name = file_name
+
+    @property
+    def is_exist(self):
+        '''
+        Проверяем наличие файла с данными
+        :return:
+        '''
+        return os.path.isfile(self._file_name)
+
+    def get_countries(self):
+        '''
+        Читаем страны из файла и делаем список состоящим из уникальных элементов
+        :return:
+        '''
+        uniq = []
+        with open(self._file_name, mode="r", encoding="UTF-8") as json_file:
+            data = json.load(json_file)
+            for p in data:
+                uniq.append(p['country'])
+        return sorted(set(uniq))[1:]
+
+
+class Weather:
+    def __init__(self, country="RU"):
+        self._country = country
+
+    @property
+    def get_country(self):
+        return self._country
+
+
+class WeatherOnline(Weather):
+    def __init__(self, country="RU"):
+        Weather.__init__(self)
+
+        self._country = country
+        self._appid = "a0676fe489771bc8199bdf536f08ec11"
+
+    @property
+    def get_weather_online(self):
+        return urllib.request.urlopen("http://api.openweathermap.org/data/2.5/weather?id=523523&units=metric&appid={}".format(self._appid))
+
+
+#1 (Если нет БД, создаём её)
+db = DB()
+if not db.is_exist:
+    db.create_db
+
+
+#2 (Читаем с файла список стран)
+# json_obj = JsonReader()
+# if json_obj.is_exist:
+#     print("Список стран:")
+#     print(json_obj.get_countries())
+
+
+#3 Скачивание погоды для выбранного города
+weather_online = WeatherOnline()
+#print(set(weather_online.get_weather_online))
+
+
+db.insert_information_from_db_for_test()
+db.select_information_from_db_for_test()
